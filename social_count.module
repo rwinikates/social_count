@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * @file
+ * A module that use SocialCount to provide share buttons.
+ */
+
+require_once('includes/social_count.block.inc');
+require_once('includes/social_count.field.inc');
+
+/**
+ * Implements hook_theme().
+ */
+function social_count_theme() {
+  return array(
+    'social_count_link' => array(
+      'variables' => array(
+        'type' => NULL,
+        'url' => NULL,
+        'show_icon' => NULL,
+      ),
+      'file' => 'social_count.theme.inc',
+    ),
+    'social_count_link_list' => array(
+      'variables' => array(
+        'items' => array(),
+        'url' => NULL,
+        'size' => NULL,
+        'show_count' => NULL,
+        'facebook_recommend' => NULL,
+      ),
+      'file' => 'social_count.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function social_count_libraries_info() {
+  $libraries['socialcount'] = array(
+    'name' => 'SocialCount',
+    'vendor url' => 'https://github.com/filamentgroup/SocialCount',
+    'download url' => 'https://raw.github.com/filamentgroup/SocialCount/master/dist/socialcount.zip',
+    'files' => array(
+      'js' => array(
+        'socialcount.min.js',
+      ),
+      'css' => array(
+        'socialcount-with-icons.min.css',
+      ),
+    ),
+    'version' => '',
+  );
+  return $libraries;
+}
+
+/**
+ * Helper function to add the social_count library.
+ */
+function _social_count_add_library() {
+  if (function_exists('libraries_load')) {
+    // Libraries 2.x
+    if (($library = libraries_detect('socialcount')) && !empty($library['installed'])) {
+      libraries_load('socialcount');
+    } else {
+      $error_message = $library['error message'];
+      drupal_set_message(t($error_message), 'error');
+    }
+  }
+  else {
+    // Libraries 1.x
+    global $base_path;
+    $path = libraries_get_path('socialcount');
+    if ($path) {
+      drupal_add_js($path . "/socialcount.js", array('group' => JS_LIBRARY));
+      drupal_add_css($path . "/socialcount-with-icons.min.css", array('group' => CSS_DEFAULT));
+    }
+  }
+}

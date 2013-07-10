@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_count module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_count_uninstall() {
+  // Delete all the html5_tools variables and then clear the variable cache.
+  db_query("DELETE FROM {variable} WHERE name LIKE 'social_count_%'");
+  cache_clear_all('variables', 'cache');
+}
